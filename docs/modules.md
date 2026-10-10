@@ -45,3 +45,19 @@ _Placeholder — awaiting walkthrough._
 - **Data** — `TimeEntry { date, minutes, activity?, category, projectType?, projectId?, workRef: none | stage | task, description? }`. Entries persist in browser localStorage and are seeded from Sep 1 – Oct 9, 2026.
 - **Showcase angle** — structured time capture that ties effort to delivery stages and finance categories, giving per-stage effort data for onboarding timelines and for cost reporting (OPEX vs CAPEX).
 - **Open questions** — is Project required for G&A? Should BUs be a selectable project type? Approval/submit flow? Weekly view?
+
+---
+
+## Onboarding
+
+- **Purpose** — track every customer onboarding from kickoff to go-live (replaces board/timeline tracking in Jira and Monday.com).
+- **Landing page** — summary tiles (current onboardings, need attention, QA needs attention, goes live in next 30 days, on hold) above four tabs:
+  - **Board** — columns per journey stage (Kickoff, Discovery, Configuration, QA / UAT, Go-Live, Hypercare); cards show health, go-live countdown, config progress, QA status, owner.
+  - **Timeline** — Gantt of start to go-live per customer, coloured by health, filled by config progress, with a today marker.
+  - **Configuration tasks** — each project's configuration checklist and status.
+  - **QA** — QA status, checks passed and open issue per customer.
+- **Project page** (`/onboarding/:id`) — tabs: Overview, Plan, Setup, Work, Documents, Comms, Admin.
+  - **Overview** — onboarding journey, scope & product, key dates, health & key facts, team, authorized contacts.
+  - **Setup** — configuration tasks and QA checks. **Work** — time logged from the Time module for linked projects. Plan, Documents, Comms and Admin are light placeholders.
+- **Rules** — "Need attention" = active and health not on track; "QA needs attention" = active with a failed QA check; "Goes live" = active with go-live in the next 30 days.
+- **Data** — fictional, generated relative to today in `src/modules/onboarding/data.ts`. Northwind and Ridgeline link to Time projects.
