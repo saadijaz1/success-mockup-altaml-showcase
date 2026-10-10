@@ -1,4 +1,4 @@
-# Success — Product Mockup
+# Success Mock Up — AltaML Showcase
 
 A front-end mockup of **Success**, an internal work-management platform built to replace Jira and Monday.com for customer onboarding and project delivery.
 
@@ -10,7 +10,7 @@ This is an independent recreation for portfolio purposes. It contains **no propr
 - Tailwind CSS v4
 - React Router
 - lucide-react icons
-- In-memory mock data (`src/data/mock.ts`) — no backend
+- Fictional mock data (`src/data/mock.ts`), persisted to browser localStorage — no backend
 
 ## Getting started
 
@@ -44,5 +44,6 @@ docs/modules.md           functional notes for each module
 | Module | Status |
 | --- | --- |
 | Dashboard | Placeholder |
+| Time | List + monthly calendar views, Log time dialog |
 
 _More modules to come._

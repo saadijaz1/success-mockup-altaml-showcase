@@ -1,9 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AppShell from './layout/AppShell';
 import { modules } from './modules/registry';
+import { TimeProvider } from './modules/time/store';
 
 export default function App() {
   return (
+    <TimeProvider>
     <BrowserRouter>
       <Routes>
         <Route element={<AppShell />}>
@@ -13,5 +15,6 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </TimeProvider>
   );
 }
