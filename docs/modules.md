@@ -61,3 +61,15 @@ _Placeholder — awaiting walkthrough._
   - **Setup** — configuration tasks and QA checks. **Work** — time logged from the Time module for linked projects. Plan, Documents, Comms and Admin are light placeholders.
 - **Rules** — "Need attention" = active and health not on track; "QA needs attention" = active with a failed QA check; "Goes live" = active with go-live in the next 30 days.
 - **Data** — fictional, generated relative to today in `src/modules/onboarding/data.ts`. Northwind and Ridgeline link to Time projects.
+
+---
+
+## Sales
+
+- **Purpose** — track prospects from first call to handoff to Onboarding.
+- **Dashboard** (`/sales`) — filters (search by name or owner, owner, tier, stage, quote, sort), scope chips (All / Owned by me / Lost), a live count, and a cards or table view. Cards show name, tier, stage, owner, days in pipeline, quote stage, and document and note counts.
+- **Prospect page** (`/sales/:id`) — tabs: Overview, Quote, Documents, Handoff Notes, Master Data; "Raise a question" button.
+  - **Overview** — deal stage tracker (synced from a CRM deal), three-step journey (Account & demo prep, Quote, Close & hand over), contacts, what they do (directory profile), similar customers, account details.
+  - Quote, Documents, Handoff Notes and Master Data are light, read-only views.
+- **Rules** — "Now" is the first incomplete step; step 1 is done once master data is extracted, step 2 when the quote is published, step 3 when it is accepted.
+- **Data** — fictional, in `src/modules/sales/data.ts`. Deal stages and the customer directory are generic stand-ins; no CRM integration.
