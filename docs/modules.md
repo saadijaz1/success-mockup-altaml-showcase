@@ -87,3 +87,13 @@ _Placeholder — awaiting walkthrough._
   - Tagging: type `@Name` in a comment, or use the Tag buttons under the comment box. Tagged people get a mention notification instead of a plain comment one.
 - **Demo mode** — nothing is sent. `deliver()` in `src/modules/connectors/store.tsx` appends to the activity log; a real email or Slack API call would go there, behind a backend.
 - **Data** — settings, rules and log persist in localStorage.
+
+## Orbit
+
+Customer accounts with a churn-risk score. Route: `/orbit`, account page `/orbit/:id`.
+
+- **Overview:** headline tiles (accounts, at risk, renewing in 90 days, ARR at risk), view chips (needs attention, renewing, silent, movers, outstanding, mine, churned), a "More numbers" panel, a health distribution bar, search/owner/sort, and a feed or table of accounts.
+- **Account page:** churn probability, the signals driving it, account details, risk flags and the (simulated) HubSpot link.
+- **Data:** 233 fictional accounts in `src/modules/orbit/accounts.json`. HubSpot sync is simulated; no real data or API is used.
+- **Model:** `ml/train_churn_model.py` generates synthetic accounts and churn labels, trains a logistic regression (compared with gradient boosting), and writes `model.json`. `score.ts` applies those weights in the browser, so scores and the "what's driving it" explanations come from the trained model. Re-run with `python3 ml/train_churn_model.py` (needs numpy and scikit-learn).
+- **Caveat:** labels are simulated, so the reported AUC (~0.82) shows the pipeline works, not real-world accuracy. A real version would train on historical churn from HubSpot and billing and run server-side.

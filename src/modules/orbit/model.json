@@ -1,0 +1,66 @@
+{
+ "version": "demo-1",
+ "features": [
+  "usageYoY",
+  "lastTouchDays",
+  "flagScore",
+  "owingK",
+  "renewalPressure",
+  "tenureMonths",
+  "tickets90",
+  "championLeft",
+  "integrations",
+  "workItems"
+ ],
+ "mean": [
+  0.047721,
+  36.493,
+  0.650667,
+  0.210278,
+  0.210861,
+  62.283,
+  1.996333,
+  0.0795,
+  2.195833,
+  1.307
+ ],
+ "scale": [
+  0.313848,
+  27.62509,
+  1.369172,
+  1.138172,
+  0.297684,
+  34.149664,
+  1.618019,
+  0.270518,
+  1.612394,
+  1.234943
+ ],
+ "coef": [
+  -0.438876,
+  0.293411,
+  0.413075,
+  0.043518,
+  0.09382,
+  -0.163708,
+  0.206242,
+  0.198805,
+  -0.264637,
+  0.029257
+ ],
+ "intercept": -2.685298,
+ "usageImpute": 0.044,
+ "bands": {
+  "watch": 0.08,
+  "atRisk": 0.2,
+  "critical": 0.38
+ },
+ "metrics": {
+  "trainRows": 6000,
+  "testRows": 2000,
+  "churnRate": 0.098,
+  "aucLogistic": 0.818,
+  "aucGradientBoosting": 0.81,
+  "brierLogistic": 0.072
+ }
+}
