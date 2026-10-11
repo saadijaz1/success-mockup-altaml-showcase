@@ -21,11 +21,18 @@ export const TASK_STATUS_META: Record<TaskStatus, [string, string]> = {
   deployed: ['Deployed to Production', 'bg-teal-50 text-teal-700'],
   done: ['Done', 'bg-emerald-50 text-emerald-700'],
 };
+export const TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
+export type TaskPriority = (typeof TASK_PRIORITIES)[number];
+export const PRIORITY_META: Record<TaskPriority, [string, string]> = {
+  low: ['Low', 'bg-slate-400'], medium: ['Medium', 'bg-blue-500'], high: ['High', 'bg-amber-500'], urgent: ['Urgent', 'bg-red-500'],
+};
+export interface TaskComment { id: string; authorId: string; at: string; text: string }
 export const isComplete = (s: TaskStatus) => s === 'done' || s === 'deployed';
 
 export interface ConfigTask {
   id: string; key: string; title: string; description: string; status: TaskStatus;
   assigneeId: string; reviewerId?: string; involved: string[]; due: string;
+  priority: TaskPriority; comments: TaskComment[];
 }
 
 export interface Step { id: string; title: string; status: StepStatus; assigneeId: string; due: string }
@@ -96,6 +103,11 @@ function build(
     return {
       id: `${id}c${i}`, key: `${abbr}-${i + 1}`, title, description: DESC[i], status, assigneeId: OWNERS[(i + n) % 3],
       reviewerId: OWNERS[(i + n + 1) % 3], involved: [], due: addDays(start, Math.round(((i + 1) / CONFIG.length) * span)),
+      priority: n === 2 && i === done ? 'urgent' : i % 4 === 0 ? 'high' : 'medium',
+      comments: i === done && stage !== 'Kickoff' ? [
+        { id: `${id}c${i}a`, authorId: OWNERS[(i + n) % 3], at: `${addDays(today, -2)}T09:30:00`, text: 'Started on this. Waiting on the final sign-off from the customer.' },
+        { id: `${id}c${i}b`, authorId: OWNERS[(i + n + 1) % 3], at: `${addDays(today, -1)}T14:10:00`, text: 'Reviewed the draft. A couple of questions on edge cases, see the description.' },
+      ] : [],
     };
   });
   const qaChecks: Step[] = QA.map((title, i) => ({
