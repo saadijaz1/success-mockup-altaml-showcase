@@ -54,10 +54,19 @@ _Placeholder — awaiting walkthrough._
 - **Landing page** — summary tiles (current onboardings, need attention, QA needs attention, goes live in next 30 days, on hold) above four tabs:
   - **Board** — columns per journey stage (Kickoff, Discovery, Configuration, QA / UAT, Go-Live, Hypercare); cards show health, go-live countdown, config progress, QA status, owner.
   - **Timeline** — Gantt of start to go-live per customer, coloured by health, filled by config progress, with a today marker.
-  - **Configuration tasks** — each project's configuration checklist and status.
+  - **Configuration tasks** — Jira-style task list per project (see below).
   - **QA** — QA status, checks passed and open issue per customer.
 - **Project page** (`/onboarding/:id`) — tabs: Overview, Plan, Setup, Work, Documents, Comms, Admin.
   - **Overview** — onboarding journey, scope & product, key dates, health & key facts, team, authorized contacts.
   - **Setup** — configuration tasks and QA checks. **Work** — time logged from the Time module for linked projects. Plan, Documents, Comms and Admin are light placeholders.
 - **Rules** — "Need attention" = active and health not on track; "QA needs attention" = active with a failed QA check; "Goes live" = active with go-live in the next 30 days.
 - **Data** — fictional, generated relative to today in `src/modules/onboarding/data.ts`. Northwind and Ridgeline link to Time projects.
+
+### Onboarding: configuration tasks (Jira style)
+
+- Each task has a key (e.g. `SC-3`), title, description, status, assignee, reviewer, other involved personnel and due date.
+- **Statuses:** Triage, To Do, In Progress, Peer Review, Peer Review Passed, Needs Attention, Deployed to Production, Done. Any status can move to any other, as in Jira's default workflow.
+- Status and assignee change inline in the table. Click a task title to edit it in a dialog (or delete it); "New task" creates one with the next key.
+- The same list appears on the Configuration tasks tab (every project) and the project's Setup tab.
+- **Rules:** progress counts Deployed and Done as complete. A project counts as "needs attention" when its health is not on track or any task is in Needs Attention. Overdue incomplete tasks show their due date in red.
+- Edits persist in browser localStorage (`src/modules/onboarding/store.tsx`); only edited projects are stored, the rest come from seed data.

@@ -2,11 +2,13 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AppShell from './layout/AppShell';
 import { modules } from './modules/registry';
 import ProjectPage from './modules/onboarding/ProjectPage';
+import { OnboardingProvider } from './modules/onboarding/store';
 import { TimeProvider } from './modules/time/store';
 
 export default function App() {
   return (
     <TimeProvider>
+    <OnboardingProvider>
     <BrowserRouter>
       <Routes>
         <Route element={<AppShell />}>
@@ -17,6 +19,7 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </OnboardingProvider>
     </TimeProvider>
   );
 }
