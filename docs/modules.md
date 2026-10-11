@@ -71,3 +71,19 @@ _Placeholder — awaiting walkthrough._
 - The same list appears on the Configuration tasks tab (every project) and the project's Setup tab.
 - **Rules:** progress counts Deployed and Done as complete. A project counts as "needs attention" when its health is not on track or any task is in Needs Attention. Overdue incomplete tasks show their due date in red.
 - Edits persist in browser localStorage (`src/modules/onboarding/store.tsx`); only edited projects are stored, the rest come from seed data.
+
+---
+
+## Connectors
+
+- **Purpose** — send task updates and @mentions to Email and Slack.
+- **Page** (`/connectors`) — tabs: Connectors, Notification rules, Activity.
+  - **Connectors:** Email (from name and address) and Slack (workspace and channel) cards with Connect / Disconnect and Send test.
+  - **Notification rules:** a table of events (status changed, reassigned, due date changed, comment added, tagged in a comment) against Email and Slack.
+  - **Activity:** every notification that was "sent", newest first; click one to read the email or Slack message.
+- **Events** are raised by task edits in the Onboarding module. Creating a task does not notify. You are never notified about your own changes.
+  - Email: one message per recipient (assignee, reviewer, involved; tagged people for mentions).
+  - Slack: one message to the channel, tagging the recipients.
+  - Tagging: type `@Name` in a comment, or use the Tag buttons under the comment box. Tagged people get a mention notification instead of a plain comment one.
+- **Demo mode** — nothing is sent. `deliver()` in `src/modules/connectors/store.tsx` appends to the activity log; a real email or Slack API call would go there, behind a backend.
+- **Data** — settings, rules and log persist in localStorage.

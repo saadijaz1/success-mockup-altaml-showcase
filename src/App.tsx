@@ -3,12 +3,14 @@ import AppShell from './layout/AppShell';
 import { modules } from './modules/registry';
 import ProjectPage from './modules/onboarding/ProjectPage';
 import TaskPage from './modules/onboarding/TaskPage';
+import { ConnectorsProvider } from './modules/connectors/store';
 import { OnboardingProvider } from './modules/onboarding/store';
 import { TimeProvider } from './modules/time/store';
 
 export default function App() {
   return (
     <TimeProvider>
+    <ConnectorsProvider>
     <OnboardingProvider>
     <BrowserRouter>
       <Routes>
@@ -22,6 +24,7 @@ export default function App() {
       </Routes>
     </BrowserRouter>
     </OnboardingProvider>
+    </ConnectorsProvider>
     </TimeProvider>
   );
 }

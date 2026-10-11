@@ -45,6 +45,7 @@ docs/modules.md           functional notes for each module
 | --- | --- |
 | Dashboard | Placeholder |
 | Time | List + monthly calendar views, Log time dialog |
+| Connectors | Email and Slack notification settings, rules and activity log (simulated) |
 | Onboarding | Summary, board, timeline, config tasks, QA, project overview |
 
 _More modules to come._

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { CURRENT_USER_ID, users } from '../../data/mock';
 import { PRIORITY_META, TASK_PRIORITIES, TASK_STATUSES, TASK_STATUS_META, type ConfigTask, type TaskPriority, type TaskStatus } from './data';
+import { Mentions } from '../connectors/mentions';
 import { useOnboardings } from './store';
 
 const inp = 'w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-brand-500';
@@ -141,7 +142,7 @@ function Comments({ comments, onAdd }: { comments: ConfigTask['comments']; onAdd
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-200 text-xs font-semibold">{users.find((u) => u.id === c.authorId)?.initials ?? '?'}</span>
             <div className="min-w-0 flex-1 rounded-lg bg-slate-50 px-3 py-2">
               <div className="text-xs"><span className="font-medium text-slate-800">{userName(c.authorId)}</span> <span className="text-slate-400">{stamp(c.at)}</span></div>
-              <p className="mt-0.5 whitespace-pre-wrap text-sm text-slate-700">{c.text}</p>
+              <p className="mt-0.5 whitespace-pre-wrap text-sm text-slate-700"><Mentions text={c.text} /></p>
             </div>
           </li>
         ))}
@@ -157,7 +158,13 @@ function Comments({ comments, onAdd }: { comments: ConfigTask['comments']; onAdd
             className={`${inp} resize-none`}
           />
           <div className="mt-2 flex items-center justify-between">
-            <span className="text-xs text-slate-400">Ctrl+Enter to post</span>
+            <span className="flex flex-wrap items-center gap-1.5 text-xs text-slate-400">
+              Tag:
+              {users.filter((u) => u.id !== CURRENT_USER_ID).map((u) => (
+                <button key={u.id} type="button" onClick={() => setText((t) => `${t}${t && !t.endsWith(' ') ? ' ' : ''}@${u.name.split(' ')[0]} `)} className="rounded bg-slate-100 px-1.5 py-0.5 text-slate-600 hover:bg-brand-50 hover:text-brand-700">@{u.name.split(' ')[0]}</button>
+              ))}
+              · Ctrl+Enter to post
+            </span>
             <button onClick={submit} disabled={!text.trim()} className="rounded-md bg-brand-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-600 disabled:bg-slate-300">Comment</button>
           </div>
         </div>
