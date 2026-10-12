@@ -6,6 +6,7 @@ import TaskPage from './modules/onboarding/TaskPage';
 import AccountPage from './modules/orbit/AccountPage';
 import { ConnectorsProvider } from './modules/connectors/store';
 import { OnboardingProvider } from './modules/onboarding/store';
+import ProspectPage from './modules/sales/ProspectPage';
 import { TimeProvider } from './modules/time/store';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
           ))}
           <Route path="/onboarding/:id/tasks/:taskId" element={<TaskPage />} />
           <Route path="/orbit/:id" element={<AccountPage />} />
+          <Route path="/sales/:id" element={<ProspectPage />} />
           <Route path="/onboarding/:id" element={<ProjectPage />} />
         </Route>
       </Routes>

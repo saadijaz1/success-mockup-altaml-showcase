@@ -107,3 +107,14 @@ Internal knowledge assistant. Route: `/mimir`.
 - **Data:** 12 fictional wiki articles and 14 resolved support tickets in `src/modules/mimir/data.ts`. No real Confluence or ticket data is used.
 - **Retrieval:** `search.ts` runs BM25 keyword search over title, tags and body, with light stemming and a few synonyms. Answers are assembled from the best matches by template. If nothing scores high enough it says it couldn't find anything instead of guessing.
 - **Not an LLM:** there is no language model in this demo. A real version would embed the Confluence pages and ticket history, retrieve with vector search, and have an LLM write the answer from the retrieved text with the same source citations, running server-side with the user's access permissions applied.
+---
+
+## Sales
+
+- **Purpose** — track prospects from first call to handoff to Onboarding.
+- **Dashboard** (`/sales`) — filters (search by name or owner, owner, tier, stage, quote, sort), scope chips (All / Owned by me / Lost), a live count, and a cards or table view. Cards show name, tier, stage, owner, days in pipeline, quote stage, and document and note counts.
+- **Prospect page** (`/sales/:id`) — tabs: Overview, Quote, Documents, Handoff Notes, Master Data; "Raise a question" button.
+  - **Overview** — deal stage tracker (synced from a CRM deal), three-step journey (Account & demo prep, Quote, Close & hand over), contacts, what they do (directory profile), similar customers, account details.
+  - Quote, Documents, Handoff Notes and Master Data are light, read-only views.
+- **Rules** — "Now" is the first incomplete step; step 1 is done once master data is extracted, step 2 when the quote is published, step 3 when it is accepted.
+- **Data** — fictional, in `src/modules/sales/data.ts`. Deal stages and the customer directory are generic stand-ins; no CRM integration.
