@@ -7,7 +7,7 @@ import DashboardPage from './dashboard/DashboardPage';
 import TimePage from './time/TimePage';
 import OnboardingPage from './onboarding/OnboardingPage';
 
-export interface ModuleDef {
+interface ModuleDef {
   path: string;
   label: string;
   icon: LucideIcon;

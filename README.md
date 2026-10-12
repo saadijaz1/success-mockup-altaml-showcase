@@ -48,3 +48,15 @@ docs/modules.md           functional notes for each module
 | Onboarding | Summary, board, timeline, config tasks, QA, project overview |
 
 _More modules to come._
+
+## Code review
+
+An independent reviewer agent lives in `.claude/agents/pr-reviewer.md`. In Claude Code:
+
+- `/review` reviews the current branch against `main`
+- `/review 12` reviews pull request 12 (uses `gh` if signed in)
+- `/review --audit` audits the whole codebase
+
+It runs `npm run review:gates` first (lint, type check, build, unused code via knip, debug leftovers, secrets, fictional-data check, PR size, docs and test hygiene), then reads the code against `docs/review-guidelines.md` and reports findings by severity. It never edits code. Use `npm run check:unused` on its own to list unused files, exports and dependencies.
+
+To block names that must never appear in the repo, put one regex per line in `.review-banned-terms`. The file is gitignored on purpose, so the terms themselves are never committed.
