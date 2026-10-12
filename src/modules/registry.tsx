@@ -11,7 +11,7 @@ import OrbitPage from './orbit/OrbitPage';
 import MimirPage from './mimir/MimirPage';
 import SalesPage from './sales/SalesPage';
 
-export interface ModuleDef {
+interface ModuleDef {
   path: string;
   label: string;
   icon: LucideIcon;
