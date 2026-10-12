@@ -25,6 +25,13 @@ export default function AccountPage() {
       <div className="grid gap-4 md:grid-cols-2">
         {!churned && (
           <Card title="Churn risk">
+            {a.thin ? (
+              <>
+                <div className="text-2xl font-semibold text-slate-600">Not enough data</div>
+                <div className="text-sm text-slate-500">Held mid-scale (health {a.health}) and not flagged as at risk, rather than guessing.</div>
+                <ul className="mt-3 list-disc pl-5 text-sm text-slate-600">{a.gaps.map((g) => <li key={g}>{g}</li>)}</ul>
+              </>
+            ) : (<>
             <div className="text-4xl font-semibold">{Math.round(a.p * 100)}%</div>
             <div className="text-sm text-slate-500">12-month churn probability · health score {a.health}</div>
             <h3 className="mb-1 mt-4 text-xs font-medium uppercase tracking-wide text-slate-500">What's driving it</h3>
@@ -35,7 +42,7 @@ export default function AccountPage() {
                 ))}
               </ul>
             ) : <p className="text-sm text-slate-500">No signals raising risk.</p>}
-            {a.thin && <p className="mt-3 text-xs text-slate-500">Thin reading: no usage data yet, so this score leans on the other signals.</p>}
+            </>)}
           </Card>
         )}
         <Card title="Account details">
