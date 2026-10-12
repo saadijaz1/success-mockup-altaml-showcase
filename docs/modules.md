@@ -62,12 +62,14 @@ _Placeholder — awaiting walkthrough._
 - **Rules** — "Need attention" = active and health not on track; "QA needs attention" = active with a failed QA check; "Goes live" = active with go-live in the next 30 days.
 - **Data** — fictional, generated relative to today in `src/modules/onboarding/data.ts`. Northwind and Ridgeline link to Time projects.
 
-### Onboarding: configuration tasks (Jira style)
+---
 
-- Each task has a key (e.g. `SC-3`), title, description, status, assignee, reviewer, other involved personnel and due date.
-- **Statuses:** Triage, To Do, In Progress, Peer Review, Peer Review Passed, Needs Attention, Deployed to Production, Done. Any status can move to any other, as in Jira's default workflow.
-- Status and assignee change inline in the table. Click a task title to open its page; "New task" creates a blank task with the next key and opens it.
-- **Task page** (`/onboarding/:id/tasks/:taskId`): left panel has the title, description and comments (newest at the bottom, Ctrl+Enter to post); right panel has status, assignee, reviewer, priority (Low, Medium, High, Urgent), due date and other involved people. Changes save immediately. Delete needs a second click to confirm.
-- The same list appears on the Configuration tasks tab (every project) and the project's Setup tab.
-- **Rules:** progress counts Deployed and Done as complete. A project counts as "needs attention" when its health is not on track or any task is in Needs Attention. Overdue incomplete tasks show their due date in red.
-- Edits persist in browser localStorage (`src/modules/onboarding/store.tsx`); only edited projects are stored, the rest come from seed data.
+## Sales
+
+- **Purpose** — track prospects from first call to handoff to Onboarding.
+- **Dashboard** (`/sales`) — filters (search by name or owner, owner, tier, stage, quote, sort), scope chips (All / Owned by me / Lost), a live count, and a cards or table view. Cards show name, tier, stage, owner, days in pipeline, quote stage, and document and note counts.
+- **Prospect page** (`/sales/:id`) — tabs: Overview, Quote, Documents, Handoff Notes, Master Data; "Raise a question" button.
+  - **Overview** — deal stage tracker (synced from a CRM deal), three-step journey (Account & demo prep, Quote, Close & hand over), contacts, what they do (directory profile), similar customers, account details.
+  - Quote, Documents, Handoff Notes and Master Data are light, read-only views.
+- **Rules** — "Now" is the first incomplete step; step 1 is done once master data is extracted, step 2 when the quote is published, step 3 when it is accepted.
+- **Data** — fictional, in `src/modules/sales/data.ts`. Deal stages and the customer directory are generic stand-ins; no CRM integration.
