@@ -18,6 +18,7 @@ export interface ModuleDef {
 
 export const modules: ModuleDef[] = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, component: DashboardPage },
+  { path: '/sales', label: 'Sales', icon: TrendingUp, component: SalesPage },
   { path: '/onboarding', label: 'Onboarding', icon: Rocket, component: OnboardingPage },
   { path: '/orbit', label: 'Orbit', icon: Orbit, component: OrbitPage },
   { path: '/time', label: 'Time', icon: Clock, component: TimePage },

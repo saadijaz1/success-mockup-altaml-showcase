@@ -62,7 +62,9 @@ _Placeholder — awaiting walkthrough._
 - **Rules** — "Need attention" = active and health not on track; "QA needs attention" = active with a failed QA check; "Goes live" = active with go-live in the next 30 days.
 - **Data** — fictional, generated relative to today in `src/modules/onboarding/data.ts`. Northwind and Ridgeline link to Time projects.
 
-### Onboarding: configuration tasks (Jira style)
+---
+
+## Sales
 
 - Each task has a key (e.g. `SC-3`), title, description, status, assignee, reviewer, other involved personnel and due date.
 - **Statuses:** Triage, To Do, In Progress, Peer Review, Peer Review Passed, Needs Attention, Deployed to Production, Done. Any status can move to any other, as in Jira's default workflow.
