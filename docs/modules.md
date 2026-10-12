@@ -98,3 +98,12 @@ Customer accounts with a churn-risk score. Route: `/orbit`, account page `/orbit
 - **Model:** `ml/train_churn_model.py` generates synthetic accounts and churn labels, trains a logistic regression (compared with gradient boosting), and writes `model.json`. `score.ts` applies those weights in the browser, so scores and the "what's driving it" explanations come from the trained model. Re-run with `python3 ml/train_churn_model.py` (needs numpy and scikit-learn).
 - **Not enough data:** accounts not linked to HubSpot, with no usage history, or under 3 months old are not scored. They sit mid-scale (health 50) as "Not enough data" and are never counted as at risk.
 - **Caveat:** labels are simulated, so the reported AUC (~0.82) shows the pipeline works, not real-world accuracy. A real version would train on historical churn from HubSpot and billing and run server-side.
+
+## Mimir
+
+Internal knowledge assistant. Route: `/mimir`.
+
+- Chat-style box for questions about features and past issues. Each answer gives the key takeaway, steps when a wiki article has them, a "Seen before" block with how similar tickets were resolved, and source chips that expand to the full article or ticket. Thumbs up/down per answer, scope filter (all, articles, tickets), and chat history saved in the browser.
+- **Data:** 12 fictional wiki articles and 14 resolved support tickets in `src/modules/mimir/data.ts`. No real Confluence or ticket data is used.
+- **Retrieval:** `search.ts` runs BM25 keyword search over title, tags and body, with light stemming and a few synonyms. Answers are assembled from the best matches by template. If nothing scores high enough it says it couldn't find anything instead of guessing.
+- **Not an LLM:** there is no language model in this demo. A real version would embed the Confluence pages and ticket history, retrieve with vector search, and have an LLM write the answer from the retrieved text with the same source citations, running server-side with the user's access permissions applied.
