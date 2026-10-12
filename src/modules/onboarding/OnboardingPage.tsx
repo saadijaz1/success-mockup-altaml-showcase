@@ -1,16 +1,19 @@
 import { Link } from 'react-router-dom';
 import { users } from '../../data/mock';
 import {
-  STAGES, addDays, daysBetween, fmt, goesLiveSoon, needsAttention, onboardings, progress, qaAttention, today,
+  STAGES, addDays, daysBetween, fmt, goesLiveSoon, needsAttention, progress, qaAttention, today,
   type Onboarding,
 } from './data';
-import { Card, Progress, QAChip, StepChip, Tabs, healthDot, useTab } from './ui';
+import { Card, Progress, QAChip, Tabs, healthDot, useTab } from './ui';
+import ConfigTasks from './ConfigTasks';
+import { useOnboardings } from './store';
 
 const TABS: [string, string][] = [['board', 'Board'], ['gantt', 'Timeline'], ['config', 'Configuration tasks'], ['qa', 'QA']];
 const initials = (id: string) => users.find((u) => u.id === id)?.initials ?? '?';
 
 export default function OnboardingPage() {
   const [tab, setTab] = useTab(TABS.map(([k]) => k));
+  const { onboardings } = useOnboardings();
   const current = onboardings;
   const tiles: [string, number, string][] = [
     ['Current onboardings', current.length, ''],
@@ -46,6 +49,7 @@ export default function OnboardingPage() {
 }
 
 function Board() {
+  const { onboardings } = useOnboardings();
   return (
     <div className="flex gap-3 overflow-x-auto pb-2">
       {STAGES.map((s) => {
@@ -87,6 +91,7 @@ function BoardCard({ o }: { o: Onboarding }) {
 }
 
 function Gantt() {
+  const { onboardings } = useOnboardings();
   const min = addDays(onboardings.map((o) => o.start).sort()[0], -7);
   const max = addDays(onboardings.map((o) => o.goLive).sort().at(-1)!, 7);
   const total = daysBetween(min, max);
@@ -130,6 +135,7 @@ function Gantt() {
 }
 
 function Config() {
+  const { onboardings } = useOnboardings();
   return (
     <div className="space-y-4">
       {onboardings.map((o) => (
@@ -138,14 +144,7 @@ function Config() {
             <Link to={`/onboarding/${o.id}?tab=setup`} className="font-medium hover:text-brand-600">{o.customer}</Link>
             <div className="w-40"><Progress pct={progress(o)} /></div>
           </div>
-          <ul className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
-            {o.configTasks.map((t) => (
-              <li key={t.id} className="flex items-center justify-between gap-2 text-sm">
-                <span className={t.status === 'done' ? 'text-slate-400 line-through' : ''}>{t.title}</span>
-                <StepChip s={t.status} />
-              </li>
-            ))}
-          </ul>
+          <ConfigTasks o={o} />
         </Card>
       ))}
     </div>
@@ -153,6 +152,7 @@ function Config() {
 }
 
 function QA() {
+  const { onboardings } = useOnboardings();
   return (
     <Card className="overflow-x-auto">
       <table className="w-full min-w-[40rem] text-sm">

@@ -4,7 +4,9 @@ import { ArrowLeft, Check } from 'lucide-react';
 import { users } from '../../data/mock';
 import { useTime } from '../time/context';
 import { formatHours } from '../time/duration';
-import { STAGES, addDays, byId, daysBetween, fmt, progress, today, type Onboarding } from './data';
+import { STAGES, addDays, daysBetween, fmt, progress, today, type Onboarding } from './data';
+import ConfigTasks from './ConfigTasks';
+import { useOnboardings } from './store';
 import { Card, HealthChip, Progress, QAChip, StepChip, Tabs, useTab } from './ui';
 
 const TABS: [string, string][] = [
@@ -15,7 +17,7 @@ const userName = (id: string) => users.find((u) => u.id === id)?.name ?? id;
 
 export default function ProjectPage() {
   const { id } = useParams();
-  const o = byId(id);
+  const o = useOnboardings().onboardings.find((x) => x.id === id);
   const [tab, setTab] = useTab(TABS.map(([k]) => k));
   if (!o) return <p className="text-sm text-slate-500">Onboarding not found. <Link to="/onboarding" className="text-brand-600">Back</Link></p>;
 
@@ -138,7 +140,7 @@ function Plan({ o }: { o: Onboarding }) {
   );
 }
 
-function Steps({ title, steps }: { title: string; steps: Onboarding['configTasks'] }) {
+function Steps({ title, steps }: { title: string; steps: Onboarding['qaChecks'] }) {
   return (
     <Card title={title}>
       <ul className="divide-y divide-slate-100 text-sm">
@@ -156,7 +158,7 @@ function Steps({ title, steps }: { title: string; steps: Onboarding['configTasks
 }
 
 const Setup = ({ o }: { o: Onboarding }) => (
-  <div className="space-y-4"><Steps title="Configuration tasks" steps={o.configTasks} /><Steps title="QA checks" steps={o.qaChecks} /></div>
+  <div className="space-y-4"><Card title="Configuration tasks"><ConfigTasks o={o} /></Card><Steps title="QA checks" steps={o.qaChecks} /></div>
 );
 
 function Work({ o }: { o: Onboarding }) {

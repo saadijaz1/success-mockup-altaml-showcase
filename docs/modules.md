@@ -54,7 +54,7 @@ _Placeholder — awaiting walkthrough._
 - **Landing page** — summary tiles (current onboardings, need attention, QA needs attention, goes live in next 30 days, on hold) above four tabs:
   - **Board** — columns per journey stage (Kickoff, Discovery, Configuration, QA / UAT, Go-Live, Hypercare); cards show health, go-live countdown, config progress, QA status, owner.
   - **Timeline** — Gantt of start to go-live per customer, coloured by health, filled by config progress, with a today marker.
-  - **Configuration tasks** — each project's configuration checklist and status.
+  - **Configuration tasks** — Jira-style task list per project (see below).
   - **QA** — QA status, checks passed and open issue per customer.
 - **Project page** (`/onboarding/:id`) — tabs: Overview, Plan, Setup, Work, Documents, Comms, Admin.
   - **Overview** — onboarding journey, scope & product, key dates, health & key facts, team, authorized contacts.

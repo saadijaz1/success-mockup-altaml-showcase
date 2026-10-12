@@ -8,6 +8,7 @@ import { TimeProvider } from './modules/time/store';
 export default function App() {
   return (
     <TimeProvider>
+    <OnboardingProvider>
     <BrowserRouter>
       <Routes>
         <Route element={<AppShell />}>
@@ -19,6 +20,7 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </OnboardingProvider>
     </TimeProvider>
   );
 }
