@@ -2,11 +2,12 @@
 // To add a module: create src/modules/<name>/<Name>Page.tsx and add one entry here.
 import type { ComponentType } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { Clock, LayoutDashboard, Rocket, TrendingUp } from 'lucide-react';
+import { Clock, LayoutDashboard, Orbit, Plug, Rocket } from 'lucide-react';
 import DashboardPage from './dashboard/DashboardPage';
 import TimePage from './time/TimePage';
+import ConnectorsPage from './connectors/ConnectorsPage';
 import OnboardingPage from './onboarding/OnboardingPage';
-import SalesPage from './sales/SalesPage';
+import OrbitPage from './orbit/OrbitPage';
 
 export interface ModuleDef {
   path: string;
@@ -19,5 +20,7 @@ export const modules: ModuleDef[] = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, component: DashboardPage },
   { path: '/sales', label: 'Sales', icon: TrendingUp, component: SalesPage },
   { path: '/onboarding', label: 'Onboarding', icon: Rocket, component: OnboardingPage },
+  { path: '/orbit', label: 'Orbit', icon: Orbit, component: OrbitPage },
   { path: '/time', label: 'Time', icon: Clock, component: TimePage },
+  { path: '/connectors', label: 'Connectors', icon: Plug, component: ConnectorsPage },
 ];

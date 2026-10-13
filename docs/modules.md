@@ -66,10 +66,37 @@ _Placeholder — awaiting walkthrough._
 
 ## Sales
 
-- **Purpose** — track prospects from first call to handoff to Onboarding.
-- **Dashboard** (`/sales`) — filters (search by name or owner, owner, tier, stage, quote, sort), scope chips (All / Owned by me / Lost), a live count, and a cards or table view. Cards show name, tier, stage, owner, days in pipeline, quote stage, and document and note counts.
-- **Prospect page** (`/sales/:id`) — tabs: Overview, Quote, Documents, Handoff Notes, Master Data; "Raise a question" button.
-  - **Overview** — deal stage tracker (synced from a CRM deal), three-step journey (Account & demo prep, Quote, Close & hand over), contacts, what they do (directory profile), similar customers, account details.
-  - Quote, Documents, Handoff Notes and Master Data are light, read-only views.
-- **Rules** — "Now" is the first incomplete step; step 1 is done once master data is extracted, step 2 when the quote is published, step 3 when it is accepted.
-- **Data** — fictional, in `src/modules/sales/data.ts`. Deal stages and the customer directory are generic stand-ins; no CRM integration.
+- Each task has a key (e.g. `SC-3`), title, description, status, assignee, reviewer, other involved personnel and due date.
+- **Statuses:** Triage, To Do, In Progress, Peer Review, Peer Review Passed, Needs Attention, Deployed to Production, Done. Any status can move to any other, as in Jira's default workflow.
+- Status and assignee change inline in the table. Click a task title to open its page; "New task" creates a blank task with the next key and opens it.
+- **Task page** (`/onboarding/:id/tasks/:taskId`): left panel has the title, description and comments (newest at the bottom, Ctrl+Enter to post); right panel has status, assignee, reviewer, priority (Low, Medium, High, Urgent), due date and other involved people. Changes save immediately. Delete needs a second click to confirm.
+- The same list appears on the Configuration tasks tab (every project) and the project's Setup tab.
+- **Rules:** progress counts Deployed and Done as complete. A project counts as "needs attention" when its health is not on track or any task is in Needs Attention. Overdue incomplete tasks show their due date in red.
+- Edits persist in browser localStorage (`src/modules/onboarding/store.tsx`); only edited projects are stored, the rest come from seed data.
+
+---
+
+## Connectors
+
+- **Purpose** — send task updates and @mentions to Email and Slack.
+- **Page** (`/connectors`) — tabs: Connectors, Notification rules, Activity.
+  - **Connectors:** Email (from name and address) and Slack (workspace and channel) cards with Connect / Disconnect and Send test.
+  - **Notification rules:** a table of events (status changed, reassigned, due date changed, comment added, tagged in a comment) against Email and Slack.
+  - **Activity:** every notification that was "sent", newest first; click one to read the email or Slack message.
+- **Events** are raised by task edits in the Onboarding module. Creating a task does not notify. You are never notified about your own changes.
+  - Email: one message per recipient (assignee, reviewer, involved; tagged people for mentions).
+  - Slack: one message to the channel, tagging the recipients.
+  - Tagging: type `@Name` in a comment, or use the Tag buttons under the comment box. Tagged people get a mention notification instead of a plain comment one.
+- **Demo mode** — nothing is sent. `deliver()` in `src/modules/connectors/store.tsx` appends to the activity log; a real email or Slack API call would go there, behind a backend.
+- **Data** — settings, rules and log persist in localStorage.
+
+## Orbit
+
+Customer accounts with a churn-risk score. Route: `/orbit`, account page `/orbit/:id`.
+
+- **Overview:** headline tiles (accounts, at risk, renewing in 90 days, ARR at risk), view chips (needs attention, renewing, silent, movers, outstanding, mine, churned), a "More numbers" panel, a health distribution bar, search/owner/sort, and a feed or table of accounts.
+- **Account page:** churn probability, the signals driving it, account details, risk flags and the (simulated) HubSpot link.
+- **Data:** 233 fictional accounts in `src/modules/orbit/accounts.json`. HubSpot sync is simulated; no real data or API is used.
+- **Model:** `ml/train_churn_model.py` generates synthetic accounts and churn labels, trains a logistic regression (compared with gradient boosting), and writes `model.json`. `score.ts` applies those weights in the browser, so scores and the "what's driving it" explanations come from the trained model. Re-run with `python3 ml/train_churn_model.py` (needs numpy and scikit-learn).
+- **Not enough data:** accounts not linked to HubSpot, with no usage history, or under 3 months old are not scored. They sit mid-scale (health 50) as "Not enough data" and are never counted as at risk.
+- **Caveat:** labels are simulated, so the reported AUC (~0.82) shows the pipeline works, not real-world accuracy. A real version would train on historical churn from HubSpot and billing and run server-side.
