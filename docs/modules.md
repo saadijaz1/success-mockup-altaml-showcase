@@ -13,9 +13,9 @@ Template per module:
 
 ---
 
-## Dashboard
+## Home
 
-_Placeholder — awaiting walkthrough._
+Landing page (`/`): a short description of the mockup and a card for each module linking to it. The blurbs live in `src/modules/dashboard/DashboardPage.tsx`.
 
 ---
 
@@ -62,9 +62,7 @@ _Placeholder — awaiting walkthrough._
 - **Rules** — "Need attention" = active and health not on track; "QA needs attention" = active with a failed QA check; "Goes live" = active with go-live in the next 30 days.
 - **Data** — fictional, generated relative to today in `src/modules/onboarding/data.ts`. Northwind and Ridgeline link to Time projects.
 
----
-
-## Sales
+### Onboarding: configuration tasks (Jira style)
 
 - Each task has a key (e.g. `SC-3`), title, description, status, assignee, reviewer, other involved personnel and due date.
 - **Statuses:** Triage, To Do, In Progress, Peer Review, Peer Review Passed, Needs Attention, Deployed to Production, Done. Any status can move to any other, as in Jira's default workflow.
@@ -101,3 +99,24 @@ Customer accounts with a churn-risk score. Route: `/orbit`, account page `/orbit
 - **Tests:** `pip install -r ml/requirements.txt`, then `npm run test:ml` (or `python3 -m pytest`). 42 tests cover the sampling, training determinism, AUC floor, coefficient signs, export fidelity, score monotonicity and that the committed JSON matches a fresh run. They test the Python scorer; `score.ts` is not covered by a JS test.
 - **Not enough data:** accounts not linked to HubSpot, with no usage history, or under 3 months old are not scored. They sit mid-scale (health 50) as "Not enough data" and are never counted as at risk.
 - **Caveat:** labels are simulated, so the reported AUC (~0.82) shows the pipeline works, not real-world accuracy. A real version would train on historical churn from HubSpot and billing and run server-side.
+
+## Mimir
+
+Internal knowledge assistant. Route: `/mimir`.
+
+- Chat-style box for questions about features and past issues. Each answer gives the key takeaway, steps when a wiki article has them, a "Seen before" block with how similar tickets were resolved, and source chips that expand to the full article or ticket. Thumbs up/down per answer, scope filter (all, articles, tickets), and chat history saved in the browser.
+- **Data:** 12 fictional wiki articles and 14 resolved support tickets in `src/modules/mimir/data.ts`. No real Confluence or ticket data is used.
+- **Retrieval:** `search.ts` runs BM25 keyword search over title, tags and body, with light stemming and a few synonyms. Answers are assembled from the best matches by template. If nothing scores high enough it says it couldn't find anything instead of guessing.
+- **Not an LLM:** there is no language model in this demo. A real version would embed the Confluence pages and ticket history, retrieve with vector search, and have an LLM write the answer from the retrieved text with the same source citations, running server-side with the user's access permissions applied.
+
+---
+
+## Sales
+
+- **Purpose** — track prospects from first call to handoff to Onboarding.
+- **Dashboard** (`/sales`) — filters (search by name or owner, owner, tier, stage, quote, sort), scope chips (All / Owned by me / Lost), a live count, and a cards or table view. Cards show name, tier, stage, owner, days in pipeline, quote stage, and document and note counts.
+- **Prospect page** (`/sales/:id`) — tabs: Overview, Quote, Documents, Handoff Notes, Master Data; "Raise a question" button.
+  - **Overview** — deal stage tracker (synced from a CRM deal), three-step journey (Account & demo prep, Quote, Close & hand over), contacts, what they do (directory profile), similar customers, account details.
+  - Quote, Documents, Handoff Notes and Master Data are light, read-only views.
+- **Rules** — "Now" is the first incomplete step; step 1 is done once master data is extracted, step 2 when the quote is published, step 3 when it is accepted.
+- **Data** — fictional, in `src/modules/sales/data.ts`. Deal stages and the customer directory are generic stand-ins; no CRM integration.
