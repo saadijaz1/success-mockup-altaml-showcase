@@ -39,6 +39,13 @@ grep -qE ':[0-9]+:[0-9]+: warning' "$TMP/lint.txt" && { warn "lint reports warni
 node_modules/.bin/tsc -b >"$TMP/tsc.txt" 2>&1 && pass "type check" || { fail "type check"; tail -15 "$TMP/tsc.txt"; }
 node_modules/.bin/vite build --outDir "$TMP/dist" --emptyOutDir >"$TMP/build.txt" 2>&1 && pass "production build" || { fail "production build"; tail -15 "$TMP/build.txt"; }
 
+echo "== Tests =="
+if [ -d ml/tests ]; then
+  if python3 -c "import pytest, sklearn, numpy" 2>/dev/null; then
+    python3 -m pytest -q >"$TMP/pytest.txt" 2>&1 && pass "python tests (pytest)" || { fail "python tests (pytest)"; tail -15 "$TMP/pytest.txt"; }
+  else warn "pytest, numpy or scikit-learn missing: run pip install -r ml/requirements.txt"; fi
+fi
+
 echo "== Extra code =="
 if [ -x node_modules/.bin/knip ]; then
   node_modules/.bin/knip --no-progress >"$TMP/knip.txt" 2>&1 && pass "no unused files, exports or dependencies" || { warn "unused code found (knip):"; head -30 "$TMP/knip.txt"; }

@@ -1,26 +1,38 @@
-// Placeholder dashboard — will be replaced once the real Dashboard module is walked through.
-import { projects, tasks } from '../../data/mock';
+// Home page: what this mockup is and a way into each module.
+import { Link } from 'react-router-dom';
+import { modules } from '../registry';
+
+const blurbs: Record<string, string> = {
+  '/sales': 'Prospect pipeline with deal stages, filters and a prospect page that hands over to Onboarding.',
+  '/onboarding': 'Customer onboarding projects: board, timeline, QA and Jira-style configuration tasks.',
+  '/orbit': 'Customer health with a churn-risk score from a Python-trained model (pytest covered).',
+  '/mimir': 'Knowledge assistant over wiki articles and past support tickets, with cited sources.',
+  '/time': 'Time entry against projects, stages and tasks, with list and monthly calendar views.',
+  '/connectors': 'Email and Slack notifications for task updates and @mentions (simulated).',
+};
 
 export default function DashboardPage() {
-  const open = tasks.filter((t) => t.status !== 'done').length;
-  const stats = [
-    { label: 'Active projects', value: projects.length },
-    { label: 'Open tasks', value: open },
-    { label: 'Completed', value: tasks.length - open },
-  ];
-
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-semibold">Dashboard</h1>
-      <div className="grid grid-cols-3 gap-4">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-lg border border-slate-200 bg-white p-4">
-            <div className="text-sm text-slate-500">{s.label}</div>
-            <div className="mt-1 text-2xl font-semibold">{s.value}</div>
-          </div>
-        ))}
+    <div className="mx-auto max-w-4xl space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold">Success Mock Up</h1>
+        <p className="mt-1 text-sm text-slate-600">
+          An independent rebuild of an internal work-management platform that replaced Jira and Monday.com. Built with
+          Claude Code, one module per branch and pull request. All data is fictional.
+        </p>
       </div>
-      <p className="text-sm text-slate-500">Scaffold placeholder — modules will be added one at a time.</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {modules
+          .filter((m) => blurbs[m.path])
+          .map(({ path, label, icon: Icon }) => (
+            <Link key={path} to={path} className="rounded-lg border border-slate-200 bg-white p-4 transition-colors hover:border-brand-500">
+              <div className="flex items-center gap-2 font-medium">
+                <Icon size={16} className="text-brand-600" /> {label}
+              </div>
+              <p className="mt-1 text-sm text-slate-500">{blurbs[path]}</p>
+            </Link>
+          ))}
+      </div>
     </div>
   );
 }
