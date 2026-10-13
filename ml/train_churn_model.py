@@ -26,6 +26,7 @@ FEATURES = ["usageYoY", "lastTouchDays", "flagScore", "owingK", "renewalPressure
 BANDS = dict(watch=0.08, atRisk=0.20, critical=0.38)
 N_TRAIN, N_LIVE, N_ONB, N_CHURN = 8000, 168, 27, 38
 OUT = Path(__file__).resolve().parent.parent / "src" / "modules" / "orbit"
+PARITY = Path(__file__).resolve().parent / "parity_scores.json"
 
 NAME_A = ["Northgate", "Redwood", "Lakeshore", "Foothills", "Prairie", "Summit", "Ironbridge", "Clearwater", "Stonehaven", "Maple Ridge", "Bluffton", "Cascade",
           "Highline", "Pinecrest", "Granite", "Harbourview", "Silverton", "Copperfield", "Westbank", "Eastgate", "Kingsway", "Rivermead", "Thornhill", "Oakridge",
@@ -123,6 +124,11 @@ def band(p, bands=BANDS):
     return "critical" if p >= bands["critical"] else "at_risk" if p >= bands["atRisk"] else "watch" if p >= bands["watch"] else "healthy"
 
 
+def parity_scores(accounts, model):
+    """Python's probability and band for every account, so the front-end test can check score.ts gives the same answers."""
+    return {a["id"]: dict(p=round(float(score_account(model, a)), 12), band=band(score_account(model, a), model["bands"])) for a in accounts}
+
+
 def make_accounts(rng):
     """Fictional accounts: live, onboarding and churned. Same draw order as the original script so the output is stable."""
     names = [f"{a} {b}" for a in NAME_A for b in NAME_B]
@@ -168,6 +174,9 @@ def main():
     print(model["metrics"])
     (OUT / "accounts.json").write_text(json.dumps(accounts, indent=0))
     (OUT / "model.json").write_text(json.dumps(model, indent=1))
+    # Scored with the saved (rounded) weights, exactly as the browser sees them.
+    saved = json.loads((OUT / "model.json").read_text())
+    PARITY.write_text(json.dumps(parity_scores(accounts, saved), indent=0))
     for f, c in zip(FEATURES, model["coef"]):
         print(f"{f:16s}{c:+.3f}")
 

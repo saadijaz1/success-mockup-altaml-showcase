@@ -1,4 +1,4 @@
-# Success Mock Up — AltaML Showcase
+# Success Mockup — AltaML Showcase
 
 **Live demo:** https://saadijaz1.github.io/success-mockup-altaml-showcase/
 
@@ -11,7 +11,7 @@ The point of the repo is to show how I work with AI day to day: Claude Code writ
 - **Claude Code as the default workflow.** For each module I described how the real product works, had Claude break it into build steps, then implemented and checked one step at a time.
 - **Small, focused commits and pull requests.** Modules were built one at a time, with later modules on feature branches merged through pull requests with written descriptions. See the closed PRs and `git log`.
 - **An independent review agent.** `.claude/agents/pr-reviewer.md` reviews every branch or PR against `docs/review-guidelines.md`. It runs the automated gates first and reports findings by severity without editing code (see [Code review](#code-review)).
-- **Tests and CI.** The churn model has a pytest suite, and GitHub Actions runs lint, type check, build and tests on every pull request.
+- **Tests and CI.** The churn model has a pytest suite and the browser scorer a Vitest suite. GitHub Actions runs lint, type check, build, unused-code check and both test suites on every pull request, and `main` only accepts changes through a passing pull request.
 
 ## Modules
 
@@ -31,7 +31,9 @@ Functional notes for each module are in [`docs/modules.md`](docs/modules.md).
 
 `ml/train_churn_model.py` generates synthetic accounts and churn labels, trains a logistic regression (compared against gradient boosting), and writes the weights to `src/modules/orbit/model.json`. The browser applies those weights in `score.ts`, so every score and its "what's driving it" explanation comes from the trained model. Labels are simulated, so the AUC (about 0.82) shows the pipeline works, not real-world accuracy.
 
-`ml/tests/` has 42 pytest tests covering sampling, training determinism, an AUC floor, coefficient signs, export fidelity, score monotonicity, and a check that the committed JSON matches a fresh training run.
+`ml/tests/` has 43 pytest tests covering sampling, training determinism, an AUC floor, coefficient signs, export fidelity, score monotonicity, and a check that the committed JSON matches a fresh training run.
+
+`src/modules/orbit/score.test.ts` (Vitest) checks that `score.ts` in the browser gives the same probability and band as the Python model for all 233 accounts (via `ml/parity_scores.json`), plus the no-data rule, health formula, bands and drivers.
 
 ### Mimir
 
@@ -40,7 +42,7 @@ The demo uses BM25 keyword search over a small fictional knowledge base and buil
 ## Stack
 
 - React 19, TypeScript, Vite, Tailwind CSS v4, React Router, lucide-react
-- Python 3, NumPy, scikit-learn, pytest
+- Python 3, NumPy, scikit-learn, pytest, Vitest
 - oxlint, knip, GitHub Actions
 - No backend: seed data lives in the repo and edits persist in browser localStorage
 
@@ -51,6 +53,7 @@ npm install
 npm run dev            # http://localhost:5173
 npm run build          # type check + production build
 npm run lint
+npm test               # Vitest for the front end
 
 pip install -r ml/requirements.txt
 npm run test:ml        # pytest for the churn model
@@ -65,7 +68,7 @@ In Claude Code:
 - `/review 12` reviews pull request 12 (uses `gh` if signed in)
 - `/review --audit` audits the whole codebase
 
-The agent runs `npm run review:gates` first: lint, type check, build, pytest, unused code (knip), debug leftovers, secrets, fictional-data check, PR size, and docs and test hygiene. It then reads the code against `docs/review-guidelines.md`. It never edits code.
+The agent runs `npm run review:gates` first: lint, type check, build, Vitest, pytest, unused code (knip), debug leftovers, secrets, fictional-data check, PR size, and docs and test hygiene. It then reads the code against `docs/review-guidelines.md`. It never edits code.
 
 To block names that must never appear in the repo, put one regex per line in `.review-banned-terms`. The file is gitignored on purpose, so the terms themselves are never committed.
 
@@ -83,3 +86,7 @@ docs/                     module notes and review guidelines
 scripts/review-gates.sh   automated review gates
 .claude/                  review agent and /review command
 ```
+
+## License
+
+All rights reserved. Shared for evaluation only.
