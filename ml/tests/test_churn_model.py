@@ -224,6 +224,12 @@ def test_committed_accounts_match_the_pipeline(built, committed):
     assert json.loads(json.dumps(built[0])) == committed[0]
 
 
+def test_committed_parity_scores_match_the_pipeline(committed):
+    # The front-end test (score.test.ts) compares score.ts against this file, so it must reflect the committed model.
+    accounts, model = committed
+    assert json.loads(m.PARITY.read_text()) == json.loads(json.dumps(m.parity_scores(accounts, model)))
+
+
 def test_committed_model_matches_the_pipeline(built, committed):
     fresh, saved = built[1], committed[1]
     assert fresh["features"] == saved["features"] and fresh["bands"] == saved["bands"]

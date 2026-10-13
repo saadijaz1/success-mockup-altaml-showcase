@@ -40,6 +40,9 @@ node_modules/.bin/tsc -b >"$TMP/tsc.txt" 2>&1 && pass "type check" || { fail "ty
 node_modules/.bin/vite build --outDir "$TMP/dist" --emptyOutDir >"$TMP/build.txt" 2>&1 && pass "production build" || { fail "production build"; tail -15 "$TMP/build.txt"; }
 
 echo "== Tests =="
+if find src -name "*.test.ts*" | grep -q .; then
+  node_modules/.bin/vitest run >"$TMP/vitest.txt" 2>&1 && pass "front-end tests (vitest)" || { fail "front-end tests (vitest)"; tail -15 "$TMP/vitest.txt"; }
+fi
 if [ -d ml/tests ]; then
   if python3 -c "import pytest, sklearn, numpy" 2>/dev/null; then
     python3 -m pytest -q >"$TMP/pytest.txt" 2>&1 && pass "python tests (pytest)" || { fail "python tests (pytest)"; tail -15 "$TMP/pytest.txt"; }
