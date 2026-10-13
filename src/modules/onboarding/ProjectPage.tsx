@@ -4,7 +4,7 @@ import { ArrowLeft, Check } from 'lucide-react';
 import { users } from '../../data/mock';
 import { useTime } from '../time/context';
 import { formatHours } from '../time/duration';
-import { STAGES, addDays, daysBetween, fmt, progress, today, type Onboarding } from './data';
+import { STAGES, addDays, fmt, progress, stagePlan, today, type Onboarding } from './data';
 import ConfigTasks from './ConfigTasks';
 import { useOnboardings } from './store';
 import { Card, HealthChip, Progress, QAChip, StepChip, Tabs, useTab } from './ui';
@@ -54,10 +54,9 @@ const KV = ({ rows }: { rows: [string, ReactNode][] }) => (
 
 function Overview({ o }: { o: Onboarding }) {
   const cur = STAGES.indexOf(o.stage);
-  const span = daysBetween(o.start, o.goLive);
+  const plan = stagePlan(o);
   const dates: [string, string][] = [
-    ['Kickoff', o.start], ['Configuration complete', addDays(o.start, Math.round(span * 0.55))],
-    ['UAT start', addDays(o.goLive, -14)], ['Go-live', o.goLive], ['Hypercare ends', addDays(o.goLive, 30)],
+    ['Kickoff', o.start], ['Configuration complete', plan[2].to], ['UAT sign-off', plan[3].to], ['Go-live', o.goLive], ['Hypercare ends', plan[5].to],
   ];
   return (
     <div className="space-y-4">
@@ -109,7 +108,8 @@ function Overview({ o }: { o: Onboarding }) {
       </div>
 
       <Card title="Authorized contacts">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[32rem] text-sm">
           <thead className="text-left text-xs uppercase tracking-wide text-slate-500"><tr><th className="pb-2">Name</th><th>Title</th><th>Email</th><th>Can approve</th></tr></thead>
           <tbody className="divide-y divide-slate-100">
             {o.contacts.map((c) => (
@@ -117,21 +117,21 @@ function Overview({ o }: { o: Onboarding }) {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
 }
 
 function Plan({ o }: { o: Onboarding }) {
-  const span = daysBetween(o.start, o.goLive);
   const cur = STAGES.indexOf(o.stage);
   return (
     <Card title="Stage plan">
       <ul className="divide-y divide-slate-100 text-sm">
-        {STAGES.slice(0, 5).map((s, i) => (
+        {stagePlan(o).map(({ stage: s, from, to }, i) => (
           <li key={s} className="flex items-center justify-between py-2.5">
             <span className="font-medium">{s}</span>
-            <span className="text-slate-500">{fmt(addDays(o.start, Math.round((span * i) / 5)))} → {fmt(addDays(o.start, Math.round((span * (i + 1)) / 5)))}</span>
+            <span className="text-slate-500">{fmt(from)} → {fmt(to)}</span>
             <span className="w-24 text-right text-xs">{i < cur ? 'Done' : i === cur ? 'Current' : 'Upcoming'}</span>
           </li>
         ))}

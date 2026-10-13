@@ -12,6 +12,24 @@ export function useTab(keys: string[]) {
   return [active, set] as const;
 }
 
+/** Page filters kept in the URL, so Back and shared links restore them. Values equal to the default are left out. */
+export function useQuery<K extends string>(defaults: Record<K, string>) {
+  const [params, setParams] = useSearchParams();
+  const q = Object.fromEntries(Object.entries<string>(defaults).map(([k, d]) => [k, params.get(k) ?? d])) as Record<K, string>;
+  const set = (patch: Partial<Record<K, string>>) => {
+    const next = new URLSearchParams(params);
+    for (const [k, v] of Object.entries<string | undefined>(patch)) {
+      if (v === undefined || v === defaults[k as K]) next.delete(k);
+      else next.set(k, v);
+    }
+    setParams(next, { replace: true });
+  };
+  return [q, set] as const;
+}
+
+/** Returns value if it is one of the allowed keys, otherwise the fallback (guards against hand-edited URLs). */
+export const oneOf = <T extends string>(value: string, allowed: readonly T[], fallback: T): T => (allowed.includes(value as T) ? (value as T) : fallback);
+
 export function Tabs({ tabs, active, onChange }: { tabs: [string, string][]; active: string; onChange: (k: string) => void }) {
   return (
     <div className="flex gap-1 overflow-x-auto border-b border-slate-200">

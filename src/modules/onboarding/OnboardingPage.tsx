@@ -93,13 +93,13 @@ function BoardCard({ o }: { o: Onboarding }) {
 function Gantt() {
   const { onboardings } = useOnboardings();
   const min = addDays(onboardings.map((o) => o.start).sort()[0], -7);
-  const max = addDays(onboardings.map((o) => o.goLive).sort().at(-1)!, 7);
+  const max = addDays(onboardings.map((o) => o.goLive).sort().at(-1)!, 21); // room for the last go-live label
   const total = daysBetween(min, max);
   const pos = (d: string) => (daysBetween(min, d) / total) * 100;
   const months: { label: string; left: number }[] = [];
   for (let i = 0; i <= total; i += 1) {
     const d = addDays(min, i);
-    if (d.endsWith('-01') || i === 0) months.push({ label: new Date(d + 'T00:00').toLocaleDateString('en-CA', { month: 'short', year: '2-digit' }), left: (i / total) * 100 });
+    if (d.endsWith('-01') || i === 0) months.push({ label: new Date(d + 'T00:00').toLocaleDateString('en-CA', d.slice(5, 7) === '01' || i === 0 ? { month: 'short', year: 'numeric' } : { month: 'short' }), left: (i / total) * 100 });
   }
   const bar: Record<string, string> = { on_track: 'bg-emerald-500', at_risk: 'bg-amber-500', off_track: 'bg-red-500' };
 
@@ -124,7 +124,7 @@ function Gantt() {
                 >
                   <div className={`h-full rounded ${bar[o.health]}`} style={{ width: `${progress(o)}%` }} />
                 </div>
-                <span className="absolute top-0.5 text-[10px] text-slate-500" style={{ left: `calc(${pos(o.goLive)}% + 4px)` }}>{fmt(o.goLive)}</span>
+                <span className="absolute top-0.5 whitespace-nowrap text-[10px] text-slate-500" style={{ left: `calc(${pos(o.goLive)}% + 4px)` }}>{fmt(o.goLive)}</span>
               </div>
             </div>
           ))}

@@ -82,6 +82,14 @@ const DESC = [
 const QA = ['Payroll calculation parity', 'Timesheet approvals', 'Overtime rules', 'Exports reconcile', 'Roles & permissions'];
 const PROGRESS = [0, 0.1, 0.5, 1, 1, 1];
 const OWNERS = ['u1', 'u2', 'u3'];
+const ROLES = ['Onboarding lead', 'Implementation specialist', 'Customer success manager'];
+
+/** Planned window for each stage: kickoff to go-live split evenly, then 30 days of hypercare. One source for the plan, key dates and task due dates. */
+export function stagePlan(o: Pick<Onboarding, 'start' | 'goLive'>) {
+  const span = daysBetween(o.start, o.goLive);
+  const at = (i: number) => addDays(o.start, Math.round((span * i) / 5));
+  return STAGES.map((stage, i) => ({ stage, from: i < 5 ? at(i) : o.goLive, to: i < 5 ? at(i + 1) : addDays(o.goLive, 30) }));
+}
 
 function build(
   n: number, customer: string, stage: StageName, status: OStatus, health: Health, qa: QAStatus,
@@ -89,7 +97,8 @@ function build(
 ): Onboarding {
   const start = addDays(today, startOff);
   const goLive = addDays(today, goLiveOff);
-  const span = Math.max(daysBetween(start, goLive) - 14, 10);
+  const configEnd = stagePlan({ start, goLive })[2].to; // configuration tasks are due by the end of the Configuration stage
+  const span = daysBetween(start, configEnd);
   const done = Math.floor(CONFIG.length * PROGRESS[STAGES.indexOf(stage)]);
   const id = `o${n}`;
   const abbr = customer.split(' ').map((w) => w[0]).join('').toUpperCase();
@@ -118,7 +127,7 @@ function build(
     id, customer, product: 'Workforce Platform', stage, status, health, healthNote, qa, ownerId: OWNERS[n % 3],
     scope: ['Timesheets', 'Payroll rules', 'Field forms', 'Approvals'],
     outOfScope: ['Historical data migration beyond 12 months'],
-    team: [{ userId: 'u1', role: 'Onboarding lead' }, { userId: 'u2', role: 'Implementation specialist' }, { userId: 'u3', role: 'Customer success manager' }],
+    team: ROLES.map((role, i) => ({ userId: OWNERS[(n + i) % 3], role })), // the owner leads
     contacts: [
       { name: `${customer.split(' ')[0]} Payroll Lead`, title: 'Payroll Manager', email: `payroll@${customer.split(' ')[0].toLowerCase()}.example`, canApprove: true },
       { name: `${customer.split(' ')[0]} Operations`, title: 'Operations Manager', email: `ops@${customer.split(' ')[0].toLowerCase()}.example`, canApprove: false },

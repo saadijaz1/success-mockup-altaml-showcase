@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { CURRENT_USER_ID, users } from '../../data/mock';
@@ -13,8 +13,15 @@ const stamp = (iso: string) => new Date(iso).toLocaleString('en-CA', { month: 's
 export default function TaskPage() {
   const { id, taskId } = useParams();
   const nav = useNavigate();
-  const { onboardings, saveTask, deleteTask } = useOnboardings();
+  const { onboardings, saveTask, deleteTask, discardIfBlank } = useOnboardings();
   const [confirm, setConfirm] = useState(false);
+  // Leaving a new task without filling anything in discards it, as a create dialog would.
+  // The check is deferred and skipped while still on this task, so StrictMode's dev remount does not delete it.
+  useEffect(() => () => {
+    setTimeout(() => {
+      if (id && taskId && !window.location.pathname.endsWith(`/tasks/${taskId}`)) discardIfBlank(id, taskId);
+    });
+  }, [id, taskId, discardIfBlank]);
 
   const o = onboardings.find((x) => x.id === id);
   const raw = o?.configTasks.find((t) => t.id === taskId);

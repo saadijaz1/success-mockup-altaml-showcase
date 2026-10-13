@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronRight, RefreshCw } from 'lucide-react';
 import { CURRENT_USER_ID, users } from '../../data/mock';
-import { Card } from '../onboarding/ui';
+import { Card, oneOf, useQuery } from '../onboarding/ui';
 import { BAND_META, MODEL, accounts, featureLabels, money, type Scored } from './score';
 
 const inp = 'rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-brand-500';
@@ -14,6 +14,7 @@ const ownerName = (id: string | null) => users.find((u) => u.id === id)?.name ??
 
 const VIEWS: Record<string, [string, (a: Scored) => boolean]> = {
   attention: ['Needs attention', (a) => isRisk(a) || a.flags.some((f) => f === 'HIGH' || f === 'CRITICAL') || a.overdueDays > 30],
+  risk: ['At risk', isRisk],
   renewing: ['Renewing 90 d', (a) => a.renewalIn !== null && a.renewalIn <= 90],
   silent: ['Silent 60 d+', (a) => a.lastTouchDays > 60],
   movers: ['Movers ↓', (a) => a.usageYoY !== null && a.usageYoY < -0.3],
@@ -27,11 +28,11 @@ const SORTS: Record<string, [string, (a: Scored, b: Scored) => number]> = {
 };
 
 export default function OrbitPage() {
-  const [view, setView] = useState('');
-  const [mode, setMode] = useState<'feed' | 'table'>('feed');
-  const [q, setQ] = useState('');
-  const [owner, setOwner] = useState('');
-  const [sort, setSort] = useState('risk');
+  const [query, set] = useQuery({ view: '', mode: 'feed', q: '', owner: '', sort: 'risk' });
+  const view = oneOf(query.view, Object.keys(VIEWS), '');
+  const mode = oneOf(query.mode, ['feed', 'table'] as const, 'feed');
+  const sort = oneOf(query.sort, Object.keys(SORTS), 'risk');
+  const { q, owner } = query;
   const [more, setMore] = useState(false);
   const [how, setHow] = useState(false);
 
@@ -60,16 +61,16 @@ export default function OrbitPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Tile label="Accounts" value={String(shown.length)} sub={`${live} live · ${shown.length - live} onboarding · ${churned.length} churned, not shown`} onClick={() => setView('')} />
-        <Tile label="At risk" value={String(risk.length)} sub={`${risk.filter((a) => !a.ownerId).length} of them unassigned`} onClick={() => { setView(''); setSort('risk'); setOwner(''); }} tone="text-orange-700" />
-        <Tile label="Renewing in 90 days" value={String(renewing.length)} sub={`${renewing.filter((a) => a.lastTouchDays > 60).length} not spoken to in 60 d`} onClick={() => setView('renewing')} />
-        <Tile label="ARR at risk" value={money(sum(risk))} sub={`of ${money(total)} CAD · ${risk.length} at-risk accounts · ${risk.filter((a) => a.arr === null).length} not valued`} onClick={() => { setView(''); setSort('arr'); }} tone="text-red-700" />
+        <Tile label="Accounts" value={String(shown.length)} sub={`${live} live · ${shown.length - live} onboarding · ${churned.length} churned, not shown`} onClick={() => set({ view: '', sort: 'risk', owner: '', q: '' })} />
+        <Tile label="At risk" value={String(risk.length)} sub={`${risk.filter((a) => !a.ownerId).length} of them unassigned`} onClick={() => set({ view: 'risk', sort: 'risk' })} tone="text-orange-700" />
+        <Tile label="Renewing in 90 days" value={String(renewing.length)} sub={`${renewing.filter((a) => a.lastTouchDays > 60).length} not spoken to in 60 d`} onClick={() => set({ view: 'renewing', sort: 'renewal' })} />
+        <Tile label="ARR at risk" value={money(sum(risk))} sub={`of ${money(total)} CAD · ${risk.length} at-risk accounts · ${risk.filter((a) => a.arr === null).length} not valued`} onClick={() => set({ view: 'risk', sort: 'arr' })} tone="text-red-700" />
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <button onClick={() => setView('')} className={chip(view === '')}>All <b>{shown.length}</b></button>
+        <button onClick={() => set({ view: '' })} className={chip(view === '')}>All <b>{shown.length}</b></button>
         {Object.entries(VIEWS).map(([k, [label]]) => (
-          <button key={k} onClick={() => setView(view === k ? '' : k)} className={chip(view === k)}>{label} <b>{count(k)}</b></button>
+          <button key={k} onClick={() => set({ view: view === k ? '' : k })} className={chip(view === k)}>{label} <b>{count(k)}</b></button>
         ))}
       </div>
 
@@ -105,17 +106,17 @@ export default function OrbitPage() {
       </Card>
 
       <div className="flex flex-wrap items-center gap-2">
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search accounts…" aria-label="Search accounts" className={`${inp} w-52`} />
-        <select value={owner} onChange={(e) => setOwner(e.target.value)} aria-label="Owner" className={inp}>
+        <input value={q} onChange={(e) => set({ q: e.target.value })} placeholder="Search accounts…" aria-label="Search accounts" className={`${inp} w-52`} />
+        <select value={owner} onChange={(e) => set({ owner: e.target.value })} aria-label="Owner" className={inp}>
           <option value="">All owners</option><option value="none">Unassigned</option>
           {users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
         </select>
-        <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort" className={inp}>
+        <select value={sort} onChange={(e) => set({ sort: e.target.value })} aria-label="Sort" className={inp}>
           {Object.entries(SORTS).map(([k, [l]]) => <option key={k} value={k}>{l}</option>)}
         </select>
-        <span className="ml-auto text-sm text-slate-500">{rows.length} of {accounts.length} accounts</span>
+        <span className="ml-auto text-sm text-slate-500">{rows.length} {rows.length === 1 ? 'account' : 'accounts'}</span>
         <div className="flex overflow-hidden rounded-md border border-slate-300 text-sm">
-          {(['feed', 'table'] as const).map((m) => <button key={m} onClick={() => setMode(m)} className={`px-3 py-1.5 capitalize ${mode === m ? 'bg-slate-800 text-white' : 'bg-white hover:bg-slate-50'}`}>{m}</button>)}
+          {(['feed', 'table'] as const).map((m) => <button key={m} onClick={() => set({ mode: m })} className={`px-3 py-1.5 capitalize ${mode === m ? 'bg-slate-800 text-white' : 'bg-white hover:bg-slate-50'}`}>{m}</button>)}
         </div>
       </div>
 
@@ -197,7 +198,7 @@ export function ModelInfo() {
     <div className="mt-3 space-y-3 text-sm text-slate-600">
       <p>
         Each account gets a 12-month churn probability from a logistic-regression model on ten signals from HubSpot and billing.
-        Health = 100 × (1 − probability). Accounts without enough HubSpot data (not linked, no usage history, or under 3 months old) are not scored: they sit at health 50 as \u201cNot enough data\u201d and are never flagged as at risk. Bands: Watch ≥ {MODEL.bands.watch * 100}%, At risk ≥ {MODEL.bands.atRisk * 100}%, Critical ≥ {MODEL.bands.critical * 100}%.
+        Health = 100 × (1 − probability). Accounts without enough HubSpot data (not linked, no usage history, or under 3 months old) are not scored: they sit at health 50 as “Not enough data” and are never flagged as at risk. Bands: Watch ≥ {MODEL.bands.watch * 100}%, At risk ≥ {MODEL.bands.atRisk * 100}%, Critical ≥ {MODEL.bands.critical * 100}%.
       </p>
       <div className="space-y-1">
         {MODEL.coef.map((c, i) => (

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Check, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { Card, Tabs, useTab } from '../onboarding/ui';
 import { DEAL_STAGES, byId, syncedLabel, type Prospect } from './data';
 import { QuoteChip } from './SalesPage';
@@ -19,16 +19,11 @@ export default function ProspectPage() {
     <div className="mx-auto max-w-6xl space-y-4">
       <div>
         <Link to="/sales" className="mb-2 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700"><ArrowLeft size={14} /> Sales</Link>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-semibold">{p.name}</h1>
-            <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-500">
-              <span className="rounded bg-brand-50 px-1.5 py-0.5 text-xs text-brand-700">{p.tier}</span>
-              <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs">{p.phase}</span>
-              Owner: {p.owner} · {p.days}d in pipeline
-            </div>
-          </div>
-          <button className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium hover:bg-slate-50">Raise a question</button>
+        <h1 className="text-xl font-semibold">{p.name}</h1>
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+          <span className="rounded bg-brand-50 px-1.5 py-0.5 text-xs text-brand-700">{p.tier}</span>
+          <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs">{p.phase}</span>
+          Owner: {p.owner} · {p.days}d in pipeline
         </div>
       </div>
       <Tabs tabs={TABS} active={tab} onChange={setTab} />
@@ -62,8 +57,7 @@ function Overview({ p }: { p: Prospect }) {
       <Card title="HubSpot deal">
         <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
           <span className="font-medium">{DEAL_STAGES[p.dealStage]}</span>
-          <span className="flex items-center gap-3 text-slate-500">synced {syncedLabel} MDT
-            <span className="inline-flex items-center gap-1 text-brand-600">Open in HubSpot <ExternalLink size={13} /></span></span>
+          <span className="text-slate-500">Synced {syncedLabel} MDT (simulated)</span>
         </div>
         <ol className="mt-3 grid gap-1.5 text-sm sm:grid-cols-3 lg:grid-cols-6">
           {DEAL_STAGES.map((s, i) => (

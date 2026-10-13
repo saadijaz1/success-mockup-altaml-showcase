@@ -12,6 +12,8 @@ interface Store {
   onboardings: Onboarding[];
   saveTask: (onboardingId: string, task: ConfigTask) => void;
   deleteTask: (onboardingId: string, taskId: string) => void;
+  /** Drop a task the user created but never filled in (no title, description or comments). */
+  discardIfBlank: (onboardingId: string, taskId: string) => void;
   nextKey: (o: Onboarding) => string;
 }
 const Ctx = createContext<Store | null>(null);
@@ -70,6 +72,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         if (o && prev) emitChanges(notify, o, prev, task);
       },
       deleteTask: (id, taskId) => edit(id, (ts) => ts.filter((t) => t.id !== taskId)),
+      discardIfBlank: (id, taskId) => edit(id, (ts) => ts.filter((t) => t.id !== taskId || !!t.title.trim() || !!t.description.trim() || !!t.comments?.length)),
       nextKey: (o) => {
         const prefix = o.configTasks[0]?.key.split('-')[0] ?? o.customer.split(' ').map((w) => w[0]).join('').toUpperCase();
         const max = Math.max(0, ...o.configTasks.map((t) => Number(t.key.split('-')[1]) || 0));

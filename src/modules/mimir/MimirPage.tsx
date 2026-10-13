@@ -76,7 +76,7 @@ export default function MimirPage() {
       </div>
 
       <form onSubmit={(e) => { e.preventDefault(); ask(text); }} className="sticky bottom-0 flex gap-2 bg-slate-50 pb-2 pt-1">
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Ask Mimir…" aria-label="Ask Mimir" className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500" />
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Ask Mimir…" aria-label="Ask Mimir" className="min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500" />
         <button disabled={!text.trim() || busy} className="flex items-center gap-1.5 rounded-md bg-brand-500 px-3.5 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:bg-slate-300"><Send size={14} /> Ask</button>
       </form>
     </div>
