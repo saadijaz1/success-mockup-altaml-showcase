@@ -17,7 +17,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-xl font-semibold">Success Mock Up</h1>
         <p className="mt-1 text-sm text-slate-600">
-          An independent rebuild of an internal work-management platform that replaced Jira and Monday.com. Built with
+          An independent rebuild of an internal work-management platform that replaced Monday.com and Jira project tracking. Built with
           Claude Code, one module per branch and pull request. All data is fictional.
         </p>
       </div>
