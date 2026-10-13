@@ -142,7 +142,6 @@ export const onboardings: Onboarding[] = [
   build(8, 'Granite Ridge Builders', 'Configuration', 'on_hold', 'at_risk', 'not_started', -50, 90, 'Paused at customer request until Q1.'),
 ];
 
-export const byId = (id?: string) => onboardings.find((o) => o.id === id);
 export const progress = (o: Onboarding) => Math.round((o.configTasks.filter((t) => isComplete(t.status)).length / Math.max(o.configTasks.length, 1)) * 100);
 export const needsAttention = (o: Onboarding) => o.status === 'active' && (o.health !== 'on_track' || o.configTasks.some((t) => t.status === 'needs_attention'));
 export const qaAttention = (o: Onboarding) => o.status === 'active' && o.qa === 'needs_attention';

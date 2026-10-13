@@ -1,5 +1,5 @@
 // Fictional sales data. Deal stages and the directory are generic stand-ins.
-import { addDays, fmt, today } from '../onboarding/data';
+import { fmt, today } from '../onboarding/data';
 
 export const DEAL_STAGES = ['Sales Qualified', 'Demo Scheduled', 'Demo Complete', 'Deep Dive', 'Negotiate and Review', 'Proposal'];
 export const TIERS = ['Essentials', 'Performance', 'Enterprise'] as const;
@@ -54,4 +54,3 @@ export const prospects: Prospect[] = ROWS.map(([name, tier, phase, dealStage, qu
 
 export const byId = (id?: string) => prospects.find((p) => p.id === id);
 export const syncedLabel = `${fmt(today)}, 10:45 a.m.`;
-export const created = (p: Prospect) => addDays(today, -p.days);
