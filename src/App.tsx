@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import AppShell from './layout/AppShell';
 import { modules } from './modules/registry';
 import ProjectPage from './modules/onboarding/ProjectPage';
@@ -24,6 +24,7 @@ export default function App() {
           <Route path="/orbit/:id" element={<AccountPage />} />
           <Route path="/sales/:id" element={<ProspectPage />} />
           <Route path="/onboarding/:id" element={<ProjectPage />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -31,4 +32,8 @@ export default function App() {
     </ConnectorsProvider>
     </TimeProvider>
   );
+}
+
+function NotFound() {
+  return <p className="text-sm text-slate-500">Page not found. <Link to="/" className="text-brand-600">Go to Home</Link></p>;
 }

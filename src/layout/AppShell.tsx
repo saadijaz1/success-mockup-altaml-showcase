@@ -1,12 +1,13 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { Search, Bell } from 'lucide-react';
+import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Bell } from 'lucide-react';
 import { modules } from '../modules/registry';
 import { users } from '../data/mock';
 import { useConnectors } from '../modules/connectors/store';
+import GlobalSearch from './GlobalSearch';
 
 export default function AppShell() {
   const me = users[0];
-  const { toast } = useConnectors();
+  const { toast, log } = useConnectors();
   return (
     <div className="flex h-screen">
       <aside className="flex w-14 shrink-0 flex-col border-r border-slate-200 bg-white md:w-60">
@@ -43,12 +44,11 @@ export default function AppShell() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
-          <div className="flex w-full max-w-80 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-400">
-            <Search size={14} /> Search projects, tasks…
-          </div>
-          <button className="rounded-md p-2 text-slate-500 hover:bg-slate-100" aria-label="Notifications">
+          <GlobalSearch />
+          <Link to="/connectors?tab=activity" className="relative rounded-md p-2 text-slate-500 hover:bg-slate-100" aria-label="Notifications sent" title="Notifications sent">
             <Bell size={18} />
-          </button>
+            {log.length > 0 && <span className="absolute right-0.5 top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white">{log.length > 9 ? '9+' : log.length}</span>}
+          </Link>
         </header>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           <Outlet />

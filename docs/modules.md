@@ -19,6 +19,14 @@ Landing page (`/`): a short description of the mockup and a card for each module
 
 ---
 
+## App shell
+
+- **Header search** matches onboardings, configuration tasks (key or title), prospects and customer accounts; arrow keys and Enter to open, Escape to clear.
+- **Bell** opens Connectors → Activity and shows how many notifications have been sent.
+- Unknown URLs show a "Page not found" page inside the app.
+
+---
+
 ## Time
 
 - **Purpose** — log and review hours against projects, stages and tasks, with a finance category on every entry.
@@ -66,7 +74,7 @@ Landing page (`/`): a short description of the mockup and a card for each module
 
 - Each task has a key (e.g. `SC-3`), title, description, status, assignee, reviewer, other involved personnel and due date.
 - **Statuses:** Triage, To Do, In Progress, Peer Review, Peer Review Passed, Needs Attention, Deployed to Production, Done. Any status can move to any other, as in Jira's default workflow.
-- Status and assignee change inline in the table. Click a task title to open its page; "New task" creates a blank task with the next key and opens it.
+- Status and assignee change inline in the table. Click a task title to open its page; "New task" creates a blank task with the next key and opens it; leaving it without a title, description or comment discards it. The stage plan, key dates and task due dates all come from one stage schedule (`stagePlan` in `data.ts`), and the project owner leads the team.
 - **Task page** (`/onboarding/:id/tasks/:taskId`): left panel has the title, description and comments (newest at the bottom, Ctrl+Enter to post); right panel has status, assignee, reviewer, priority (Low, Medium, High, Urgent), due date and other involved people. Changes save immediately. Delete needs a second click to confirm.
 - The same list appears on the Configuration tasks tab (every project) and the project's Setup tab.
 - **Rules:** progress counts Deployed and Done as complete. A project counts as "needs attention" when its health is not on track or any task is in Needs Attention. Overdue incomplete tasks show their due date in red.
@@ -92,7 +100,7 @@ Landing page (`/`): a short description of the mockup and a card for each module
 
 Customer accounts with a churn-risk score. Route: `/orbit`, account page `/orbit/:id`.
 
-- **Overview:** headline tiles (accounts, at risk, renewing in 90 days, ARR at risk), view chips (needs attention, renewing, silent, movers, outstanding, mine, churned), a "More numbers" panel, a health distribution bar, search/owner/sort, and a feed or table of accounts.
+- **Overview:** headline tiles (accounts, at risk, renewing in 90 days, ARR at risk), view chips (needs attention, at risk, renewing, silent, movers, outstanding, mine, churned), a "More numbers" panel, a health distribution bar, search/owner/sort, and a feed or table of accounts. Tiles apply the matching view (At risk and ARR at risk open the at-risk list). The view, filters and feed/table choice live in the URL, so Back and shared links keep them.
 - **Account page:** churn probability, the signals driving it, account details, risk flags and the (simulated) HubSpot link.
 - **Data:** 233 fictional accounts in `src/modules/orbit/accounts.json`. HubSpot sync is simulated; no real data or API is used.
 - **Model:** `ml/train_churn_model.py` generates synthetic accounts and churn labels, trains a logistic regression (compared with gradient boosting), and writes `model.json`. `score.ts` applies those weights in the browser, so scores and the "what's driving it" explanations come from the trained model. Re-run with `python3 ml/train_churn_model.py` (needs numpy and scikit-learn).
@@ -114,8 +122,8 @@ Internal knowledge assistant. Route: `/mimir`.
 ## Sales
 
 - **Purpose** — track prospects from first call to handoff to Onboarding.
-- **Dashboard** (`/sales`) — filters (search by name or owner, owner, tier, stage, quote, sort), scope chips (All / Owned by me / Lost), a live count, and a cards or table view. Cards show name, tier, stage, owner, days in pipeline, quote stage, and document and note counts.
-- **Prospect page** (`/sales/:id`) — tabs: Overview, Quote, Documents, Handoff Notes, Master Data; "Raise a question" button.
+- **Dashboard** (`/sales`) — filters (search by name or owner, owner, tier, stage, quote, sort), scope chips (All / Owned by me / Lost), a live count, and a cards or table view. Filters and view live in the URL; an empty result offers "Clear filters". Cards show name, tier, stage, owner, days in pipeline, quote stage, and document and note counts.
+- **Prospect page** (`/sales/:id`) — tabs: Overview, Quote, Documents, Handoff Notes, Master Data.
   - **Overview** — deal stage tracker (synced from a CRM deal), three-step journey (Account & demo prep, Quote, Close & hand over), contacts, what they do (directory profile), similar customers, account details.
   - Quote, Documents, Handoff Notes and Master Data are light, read-only views.
 - **Rules** — "Now" is the first incomplete step; step 1 is done once master data is extracted, step 2 when the quote is published, step 3 when it is accepted.
