@@ -9,7 +9,7 @@ The point of the repo is to show how I work with AI day to day: Claude Code writ
 ## How it was built
 
 - **Claude Code as the default workflow.** For each module I described how the real product works, had Claude break it into build steps, then implemented and checked one step at a time.
-- **One module per branch and pull request.** Each PR has a written description and is reviewed before merge. See the closed PRs and `git log`.
+- **Small, focused commits and pull requests.** Modules were built one at a time, with later modules on feature branches merged through pull requests with written descriptions. See the closed PRs and `git log`.
 - **An independent review agent.** `.claude/agents/pr-reviewer.md` reviews every branch or PR against `docs/review-guidelines.md`. It runs the automated gates first and reports findings by severity without editing code (see [Code review](#code-review)).
 - **Tests and CI.** The churn model has a pytest suite, and GitHub Actions runs lint, type check, build and tests on every pull request.
 

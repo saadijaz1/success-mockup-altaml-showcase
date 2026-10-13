@@ -18,7 +18,7 @@ export default function DashboardPage() {
         <h1 className="text-xl font-semibold">Success Mock Up</h1>
         <p className="mt-1 text-sm text-slate-600">
           An independent rebuild of an internal work-management platform that replaced Monday.com and Jira project tracking. Built with
-          Claude Code, one module per branch and pull request. All data is fictional.
+          Claude Code, one module at a time. All data is fictional.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
